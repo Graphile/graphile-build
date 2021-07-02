@@ -8,7 +8,7 @@ insert into pg11.network values
   (7, '::ffff:1.2.3.0/120', '::ffff:1.2.3.0/120', '0800-2b01-0203', '08002b01:02030405'),
   (8, '::ffff:1.2.3.0/128', '::ffff:1.2.3.0/128', 'AABBCCDDEEFF', '08002b0102030405');
 
-alter sequence pg11.network_id_seq restart with 9;
+-- select setval('pg11.network_id_seq', 9); -- alter sequence pg11.network_id_seq restart with 9;
 
 insert into pg11.types values
   (
@@ -26,4 +26,4 @@ insert into pg11.types values
     (1, '2', 'blue', '4be8a712-3ff7-432e-aa34-fdb43fbd838d', 'FOO_BAR', '', interval '6 hours', 8)
   );
 
-alter sequence pg11.types_id_seq restart with 15;
+-- select setval('pg11.types_id_seq', 15); -- alter sequence pg11.types_id_seq restart with 15;

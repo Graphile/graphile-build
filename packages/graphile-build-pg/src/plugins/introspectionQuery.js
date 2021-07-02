@@ -12,9 +12,14 @@ function makeIntrospectionQuery(
   options: {
     pgLegacyFunctionsOnly?: boolean,
     pgIgnoreRBAC?: boolean,
+    pgIsCockroach?: boolean,
   } = {}
 ): string {
-  const { pgLegacyFunctionsOnly = false, pgIgnoreRBAC = true } = options;
+  const {
+    pgLegacyFunctionsOnly = false,
+    pgIgnoreRBAC = true,
+    pgIsCockroach = false,
+  } = options;
   const unionRBAC = `
     union all
       select pg_roles.oid _oid, pg_roles.*
@@ -385,7 +390,7 @@ with
       idx.indkey as "attributeNums",
       am.amname as "indexType",
       ${
-        serverVersionNum >= 90600
+        !pgIsCockroach && serverVersionNum >= 90600
           ? `\
       (
         select array_agg(pg_index_column_has_property(idx.indexrelid,n::int2,'asc'))

@@ -670,15 +670,17 @@ export default (async function PgIntrospectionPlugin(
       await persistentMemoizeWithKey(cacheKey, () =>
         withPgClient(pgConfig, async pgClient => {
           const versionResult = await pgClient.query(
-            "show server_version_num;"
+            "select current_setting('server_version_num') as server_version_num, current_setting('crdb_version', true) as crdb_version;"
           );
           const serverVersionNum = parseInt(
             versionResult.rows[0].server_version_num,
             10
           );
+          const pgIsCockroach = versionResult.rows[0].crdb_version !== null;
           const introspectionQuery = makeIntrospectionQuery(serverVersionNum, {
             pgLegacyFunctionsOnly,
             pgIgnoreRBAC,
+            pgIsCockroach,
           });
           const { rows } = await pgClient.query(introspectionQuery, [
             schemas,

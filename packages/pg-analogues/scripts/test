@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -e
+
+psql -Xqv ON_ERROR_STOP=1 -f __tests__/kitchen-sink-schema.analogue.sql "$TEST_DATABASE_URL"
+psql -Xqv ON_ERROR_STOP=1 -f __tests__/kitchen-sink-permissions.analogue.sql "$TEST_DATABASE_URL"
+
+jest -i $@

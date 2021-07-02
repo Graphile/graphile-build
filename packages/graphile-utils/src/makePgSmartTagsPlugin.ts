@@ -31,7 +31,8 @@ export type PgSmartTagSupportedKinds =
   | PgEntityKind.CLASS
   | PgEntityKind.ATTRIBUTE
   | PgEntityKind.CONSTRAINT
-  | PgEntityKind.PROCEDURE;
+  | PgEntityKind.PROCEDURE
+  | PgEntityKind.NAMESPACE;
 
 const meaningByKind: {
   [kind in PgSmartTagSupportedKinds]: string;
@@ -40,6 +41,7 @@ const meaningByKind: {
   ["attribute"]: "for columns/attributes (of any 'class' type)",
   ["constraint"]: "for table constraints",
   ["procedure"]: "for functions/procedures",
+  ["namespace"]: "for schemas",
 };
 
 const validKinds = Object.entries(meaningByKind)
@@ -324,11 +326,12 @@ export function pgSmartTagRulesFromJSON(
         columns,
         attribute,
         constraint,
+        namespace,
         ...rest
       } = spec;
       if (Object.keys(rest).length > 0) {
         console.warn(
-          `WARNING: makeJSONPgSmartTagsPlugin identifier spec only supports 'tags', 'description', 'attribute' and 'constraint' currently, you have also set '${Object.keys(
+          `WARNING: makeJSONPgSmartTagsPlugin identifier spec only supports 'tags', 'description', 'attribute', 'constraint' and 'namespace' currently, you have also set '${Object.keys(
             rest
           ).join("', '")}' at 'config.${kind}.${identifier}'`
         );
@@ -368,6 +371,15 @@ export function pgSmartTagRulesFromJSON(
           "constraint" as PgEntityKind.CONSTRAINT,
           constraint,
           "constraint"
+        );
+      }
+      if (namespace) {
+        process(
+          kind,
+          identifier,
+          "namespace" as PgEntityKind.NAMESPACE,
+          namespace,
+          "namespace"
         );
       }
     }
